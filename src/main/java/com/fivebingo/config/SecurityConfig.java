@@ -37,21 +37,11 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // ── 로그인 ──────────────────────────────────────
-                        .requestMatchers("/api/auth/login").permitAll()
-                        // ── 게스트 접근 필요 API (인증 불필요) ───────────
-                        .requestMatchers("/api/rooms/invite/**").permitAll()   // 초대코드로 방 조회
-                        .requestMatchers("/api/rooms/join/**").permitAll()     // 게스트 방 입장
-                        .requestMatchers("/api/rooms/*/board").permitAll()     // 빙고판 제출
-                        .requestMatchers("/api/rooms/*/ready").permitAll()     // 준비 완료
-                        .requestMatchers("/api/rooms/*").permitAll()           // 방 정보 조회
-                        .requestMatchers("/api/game/**").permitAll()           // 게임 보드/턴 조회
-                        // ── WebSocket ────────────────────────────────────
-                        .requestMatchers("/ws/**").permitAll()
-                        // ── 개발용 ───────────────────────────────────────
-                        .requestMatchers("/h2-console/**").permitAll()
-                        // ── 나머지 (방 생성, 게임 시작) → 로그인 필요 ────
-                        .anyRequest().authenticated()
+                        // 로그인만 필요한 API: 방 생성, 게임 시작
+                        .requestMatchers("POST", "/api/rooms").authenticated()
+                        .requestMatchers("POST", "/api/rooms/*/start").authenticated()
+                        // 나머지 모든 요청은 허용 (게스트 접근 가능)
+                        .anyRequest().permitAll()
                 )
                 .headers(h -> h.frameOptions(f -> f.sameOrigin()))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

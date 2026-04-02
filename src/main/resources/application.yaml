@@ -16,7 +16,7 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
 #  data:
 #    redis:
 #      host: localhost
@@ -36,3 +36,9 @@ admin:
   username: admin       # 원하는 아이디로 변경
   password: admin1234   # 원하는 비밀번호로 변경
   nickname: 방장         # 원하는 닉네임으로 변경
+
+# ── Security 디버그 로그 (403 원인 파악용) ──────────────
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.web.access: TRACE
